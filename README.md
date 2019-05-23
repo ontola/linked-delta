@@ -4,6 +4,21 @@ Extensible protocol for the transfer of delta updates in linked datasets.
 ## In short
 To communicate changes to some (linked/RDF) dataset, special graph names can be used to convey the changes to that set.
 
+## Example
+
+Initial state:
+``` turtle
+<http://example.org/resource> <http://example.org/predicate> "Old value 👴" .
+```
+Linked-Delta:
+``` nquads
+<http://example.org/resource> <http://example.org/predicate> "New value 🧒" <http://purl.org/link-lib/replace> .
+```
+New state:
+```nquads
+<http://example.org/resource> <http://example.org/predicate> "New value 🧒" .
+```
+
 ## Protocol
 Status: draft
 
