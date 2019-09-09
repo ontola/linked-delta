@@ -8,15 +8,15 @@ To communicate changes to some (linked/RDF) dataset, special graph names can be 
 
 Initial state:
 ``` turtle
-<http://example.org/resource> <http://example.org/predicate> "Old value 👴" .
+<http://example.org/resource> <http://example.org/predicate> "Old value 🙈" .
 ```
 Linked-Delta:
 ``` nquads
-<http://example.org/resource> <http://example.org/predicate> "New value 🧒" <http://purl.org/link-lib/replace> .
+<http://example.org/resource> <http://example.org/predicate> "New value 🐵" <http://purl.org/linked-delta/replace> .
 ```
 New state:
 ```nquads
-<http://example.org/resource> <http://example.org/predicate> "New value 🧒" .
+<http://example.org/resource> <http://example.org/predicate> "New value 🐵" .
 ```
 
 ## Protocol
@@ -40,28 +40,28 @@ It is NOT RECOMMENDED to use blank nodes in a delta repository. When the underly
 ## Base vocabulary
 Currently three different graph name IRI's have been (not yet fully) defined as to how the triple data in that quad should be processed:
 
-### ll:add
-Graph IRI: http://purl.org/link-lib/add
+### ld:add
+Graph IRI: http://purl.org/linked-delta/add
 
 The underlying triple SHOULD be added to the store. If the full [s,p,o] combination is already present, it SHOULD be omitted. If a triple with the same [s,p] combination is present, but has a different object, the triple SHOULD be added to the store in addition to the present statements.
 
-### ll:remove
-Graph IRI: http://purl.org/link-lib/remove
+### ld:remove
+Graph IRI: http://purl.org/linked-delta/remove
 
 All triples that match the same [s,p] combination as the underlying triple SHOULD be removed from the store. The underlying triple should match as well if it was added beforehand.
 
 When the object of the underlying triple refers to a blank node, the origin MAY omit the inclusion of the referenced resource.
 
-### ll:replace
-Graph IRI: http://purl.org/link-lib/replace
+### ld:replace
+Graph IRI: http://purl.org/linked-delta/replace
 
-The [s,p] combination of the triple MUST be processed with the logic of ll:remove. After which all the underlying triples of the repository MUST be added according to the ll:add logic.
+The [s,p] combination of the triple MUST be processed with the logic of ld:remove. After which all the underlying triples of the repository MUST be added according to the ld:add logic.
 
 ### Order
 The processor MUST execute the logic of the above defined in the following order: 
-1. ll:remove
-2. ll:replace
-3. ll:add
+1. ld:remove
+2. ld:replace
+3. ld:add
 
 ## Motivation
 The current paradigm is to program logic on what to do after some request is done, based on the status code
@@ -78,4 +78,4 @@ sync with the server again.
 So in short, the server should send a delta of the server state before and after the request was processed. The default
 behaviour is to add all the statements returned by the server, so if a resource was created, its triples should be sent
 back to the client. When data was changed or deleted*, the statements should be contained in a named graph to indicate to
-the client that the matching statements should be removed (<ll:remove>).
+the client that the matching statements should be removed (<ld:remove>).
