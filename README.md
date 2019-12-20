@@ -45,17 +45,24 @@ It is NOT RECOMMENDED to use blank nodes in a delta repository. When the underly
 
 ## Base vocabulary
 
-Currently three different graph name IRI's have been (not yet fully) defined as to how the triple data in that quad should be processed:
+Currently four different graph name IRI's have been (not yet fully) defined as to how the triple data in that quad should be processed.
+You're free to extend and define other delta definitions.
+
+_Cursive text is non-normative._
 
 ### ld:add
 
 Graph IRI: http://purl.org/linked-delta/add
+
+_Adds the triple to the store._
 
 The underlying triple SHOULD be added to the store. If the full [s,p,o] combination is already present, it SHOULD be omitted. If a triple with the same [s,p] combination is present, but has a different object, the triple SHOULD be added to the store in addition to the present statements.
 
 ### ld:remove
 
 Graph IRI: http://purl.org/linked-delta/remove
+
+_Removes all triples with the subject, predicate combination._
 
 All triples that match the same [s,p] combination as the underlying triple SHOULD be removed from the store. The underlying triple should match as well if it was added beforehand.
 
@@ -65,7 +72,17 @@ When the object of the underlying triple refers to a blank node, the origin MAY 
 
 Graph IRI: http://purl.org/linked-delta/replace
 
+_Replaces all the subject, predicate combinations with the ones in the graph._
+
 The [s,p] combination of the triple MUST be processed with the logic of ld:remove. After which all the underlying triples of the repository MUST be added according to the ld:add logic.
+
+#### ld:supplant
+
+Graph IRI: https://purl.org/linked-delta/supplant
+
+_Removes all statements of the subject, replaces all the triples with the new ones._
+
+All [s] triples MUST b processed with the logic of ld:remove. After which all of the underlying triples of the repository MUST be added according to the ld:add logic.
 
 ### Order
 
