@@ -35,6 +35,8 @@ Status: draft
 
 **Store** or **target store**: the target rdf graph or repository against which the update is executed. This generally is either the default graph or some main repository the application uses to run its logic against.
 
+**Operator**: the function that describes how the triple should be updated in the store (e.g. 'replace').
+
 ### Processing
 
 To keep behaviour consitent across implementations, it is RECOMMENDED that, when recieving a delta repository, the processor processes the statements in order of recieving them. Though vocabularies MAY define to have idempotent behaviour regardless of processing order.
@@ -43,10 +45,10 @@ Processing all the delta repositories in order of some origin store SHOULD resul
 
 It is NOT RECOMMENDED to use blank nodes in a delta repository. When the underlying triple's object refers to a blank node, the blank node SHOULD be included in the delta repository, unless the graph name IRI specifies otherwise.
 
-## Base vocabulary
+## Operators
 
 Currently four different graph name IRI's have been (not yet fully) defined as to how the triple data in that quad should be processed.
-You're free to extend and define other delta definitions.
+You're free to extend and define other operators.
 
 _Cursive text is non-normative._
 
