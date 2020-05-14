@@ -21,11 +21,29 @@ New state:
 <http://example.org/resource> <http://example.org/predicate> "New value 🐵" .
 ```
 
+Targeting named graphs:
+
+
+Initial state:
+``` turtle
+<http://example.org/resource> <http://example.org/predicate> "Old value 🙈" <http://example.org/graph/1> .
+<http://example.org/resource> <http://example.org/predicate> "Different graph 🙈" <http://example.org/graph/2> .
+```
+Linked-Delta:
+``` nquads
+<http://example.org/resource> <http://example.org/predicate> "New value 🐵" <http://purl.org/linked-delta/replace?graph=http%3A%2F%2Fexample.org%2Fgraph%2F1> .
+```
+New state:
+```nquads
+<http://example.org/resource> <http://example.org/predicate> "New value 🐵" <http://example.org/graph/1> .
+<http://example.org/resource> <http://example.org/predicate> "Different graph 🙈" <http://example.org/graph/2> .
+```
+
 ## Protocol
 
 Status: draft
 
-### Definitions
+## Definitions
 
 **delta**: A graph of quad statements
 
@@ -35,9 +53,15 @@ Status: draft
 
 **Store** or **target store**: the target rdf graph or repository against which the update is executed. This generally is either the default graph or some main repository the application uses to run its logic against.
 
-**Operator**: the function that describes how the triple should be updated in the store (e.g. 'replace').
+**Operator**: an IRI representing the function that describes how the triple should be updated in the store (e.g. 'replace'). The operator MUST NOT contain query parameters.
 
-### Processing
+**Operator argument**: additional arguments to the operator, these are provided via query paramters on the operators IRI.
+
+_Cursive text is non-normative._
+
+## Processing
+
+### Consistency
 
 To keep behaviour consitent across implementations, it is RECOMMENDED that, when recieving a delta repository, the processor processes the statements in order of recieving them. Though vocabularies MAY define to have idempotent behaviour regardless of processing order.
 
@@ -45,14 +69,12 @@ Processing all the delta repositories in order of some origin store SHOULD resul
 
 It is NOT RECOMMENDED to use blank nodes in a delta repository. When the underlying triple's object refers to a blank node, the blank node SHOULD be included in the delta repository, unless the graph name IRI specifies otherwise.
 
-## Operators
+### Operators
 
 Currently four different graph name IRI's have been (not yet fully) defined as to how the triple data in that quad should be processed.
 You're free to extend and define other operators.
 
-_Cursive text is non-normative._
-
-### ld:add
+#### ld:add
 
 Graph IRI: http://purl.org/linked-delta/add
 
@@ -60,7 +82,7 @@ _Adds the triple to the store._
 
 The underlying triple SHOULD be added to the store. If the full [s,p,o] combination is already present, it SHOULD be omitted. If a triple with the same [s,p] combination is present, but has a different object, the triple SHOULD be added to the store in addition to the present statements.
 
-### ld:remove
+#### ld:remove
 
 Graph IRI: http://purl.org/linked-delta/remove
 
@@ -70,7 +92,7 @@ All triples that match the same [s,p] combination as the underlying triple SHOUL
 
 When the object of the underlying triple refers to a blank node, the origin MAY omit the inclusion of the referenced resource.
 
-### ld:replace
+#### ld:replace
 
 Graph IRI: http://purl.org/linked-delta/replace
 
@@ -85,6 +107,17 @@ Graph IRI: https://purl.org/linked-delta/supplant
 _Removes all statements of the subject, replaces all the triples with the new ones._
 
 All [s] triples MUST b processed with the logic of ld:remove. After which all of the underlying triples of the repository MUST be added according to the ld:add logic.
+
+### Operator Arguments
+
+In order to express more information with regards to procesing, Operator Arguments can be used. The meaning of an Operator Argument is independent of the Operator and thus have global behaviour. Due to their independent behaviour, Operator Arguments MAY NOT be defined outside this specification.
+
+An Operator Argument is expressed in the query string of the operator and must adhere to the URL spec.
+
+#### Graph
+Query parameter key: `graph`
+
+Lets the operation target a specific graph in the store, operators target the default graph when omitted.
 
 ### Order
 
