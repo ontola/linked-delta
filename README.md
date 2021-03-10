@@ -135,6 +135,17 @@ The processor MUST execute the logic of the above defined in the following order
 - A simpler alternative to SPARQL-Update
 - No need for new parsers - many RDF parsers already support N-Quads.
 
+## With Hextuples-NDJSON serialization
+
+The [`hextuples-ndjson`](https://github.com/ontola/hextuples) serialization format is recommended for linked-delta's.
+
+Here's an example, which adds a `birthDate` and replaces a `birtPlace`:
+
+```ndjson
+["https://www.w3.org/People/Berners-Lee/", "http://schema.org/birthDate", "1955-06-08", "http://www.w3.org/2001/XMLSchema#date", "", "http://purl.org/linked-delta/add"]
+["https://www.w3.org/People/Berners-Lee/", "http://schema.org/birthPlace", "http://dbpedia.org/resource/London", "http://www.w3.org/1999/02/22-rdf-syntax-ns#namedNode", "", "http://purl.org/linked-delta/replace"]
+```
+
 ## How we use it
 
 - We use this in [Argu.co](https://argu.co) to communicate state changes between server and the front-end client app, and to describe actions. These are executed using [link-lib](https://github.com/fletcher91/link-lib/).
@@ -157,7 +168,6 @@ So in short, the server should send a delta of the server state before and after
 behaviour is to add all the statements returned by the server, so if a resource was created, its triples should be sent
 back to the client. When data was changed or deleted*, the statements should be contained in a named graph to indicate to
 the client that the matching statements should be removed (<ld:remove>).
-
 
 ## Related projects / alternatives
 
